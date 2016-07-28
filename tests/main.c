@@ -1,8 +1,6 @@
 #include "atf.h"
-#include <util.h>
+#include <stdc.h>
 #include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 int main(int argc, char** argv)
 {

@@ -2,6 +2,7 @@
 #include "atf.h"
 
 // File To Test
+#include <stdc.h>
 #include <slist.h>
 
 //-----------------------------------------------------------------------------

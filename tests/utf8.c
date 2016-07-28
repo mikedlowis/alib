@@ -1,8 +1,8 @@
 // Unit Test Framework Includes
 #include "atf.h"
-#include <util.h>
 
 // File To Test
+#include <stdc.h>
 #include <utf8.h>
 
 static bool is_rejected(char* seq) {

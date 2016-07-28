@@ -2,7 +2,7 @@
 #include "atf.h"
 
 // File To Test
-#include <util.h>
+#include <stdc.h>
 #include <hash.h>
 
 static const uint Num_Iterations = 1000000;
