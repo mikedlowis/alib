@@ -3,11 +3,6 @@
   @author Michael D. Lowis
   @license BSD 2-clause License
 */
-#ifndef BSTREE_H
-#define BSTREE_H
-
-#include <stddef.h>
-#include <stdbool.h>
 
 typedef struct bstree_node_t {
     struct bstree_node_t* left;
@@ -72,5 +67,3 @@ static bstree_node_t* bstree_lookup(bstree_t* tree, bstree_node_t* node) {
     bstree_node_t** curr = find_node(tree->cmpfn, &(tree->root), node, false);
     return *curr;
 }
-
-#endif /* BSTREE_H */

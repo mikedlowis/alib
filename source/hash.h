@@ -3,13 +3,6 @@
   @author Michael D. Lowis
   @license BSD 2-clause License
 */
-#ifndef HASH_H
-#define HASH_H
-
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdlib.h>
 
 typedef struct hash_entry_t {
     unsigned int hash;
@@ -197,5 +190,3 @@ static bool hash_del(hash_t* hash, hash_entry_t* entry) {
     }
     return ret;
 }
-
-#endif /* HASH_H */

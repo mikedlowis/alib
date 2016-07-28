@@ -3,14 +3,6 @@
   @author Michael D. Lowis
   @license BSD 2-clause License
 */
-#ifndef VEC_H
-#define VEC_H
-
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
 
 typedef struct {
     size_t   elem_count;
@@ -115,5 +107,3 @@ static void vec_pop_back(vec_t* vec, void* outdata) {
 static void vec_clear(vec_t* vec) {
     vec->elem_count = 0;
 }
-
-#endif /* VEC_H */

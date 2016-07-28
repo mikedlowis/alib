@@ -3,8 +3,6 @@
   @author Michael D. Lowis
   @license BSD 2-clause License
 */
-#ifndef UTIL_H
-#define UTIL_H
 
 /* Standard Macros and Types */
 #include <stddef.h>
@@ -282,6 +280,4 @@ static inline char* _getopt_(int* p_argc, char*** p_argv) {
 #ifndef static_assert
     #define static_assert(expr) \
         typedef char unique_id[( expr )?1:-1]
-#endif
-
 #endif

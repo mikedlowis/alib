@@ -3,11 +3,6 @@
   @author Michael D. Lowis
   @license BSD 2-clause License
 */
-#ifndef SLIST_H
-#define SLIST_H
-
-#include <stddef.h>
-#include <stdbool.h>
 
 typedef struct slist_node_t {
     struct slist_node_t* next;
@@ -91,5 +86,3 @@ static slist_node_t* slist_node_next(slist_node_t* node) {
 
 #define slist_foreach(elem, list) \
     for(slist_node_t* elem = slist_front(list); elem != NULL; elem = elem->next)
-
-#endif /* SLIST_H */

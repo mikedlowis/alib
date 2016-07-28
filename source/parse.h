@@ -3,13 +3,6 @@
   @author Michael D. Lowis
   @license BSD 2-clause License
 */
-#ifndef PARSE_H
-#define PARSE_H
-
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <stdio.h>
 
 /*
     NOTE: The tokval_t is left undefined in this header file. It is intended
@@ -143,5 +136,3 @@ static void release(parser_t* ctx) {
     ctx->markcount--;
     seek(ctx, marker);
 }
-
-#endif /* PARSE_H */

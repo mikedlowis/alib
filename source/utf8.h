@@ -3,12 +3,6 @@
   @author Michael D. Lowis
   @license BSD 2-clause License
 */
-#ifndef UTF8_H
-#define UTF8_H
-
-#include <stdint.h>
-#include <stdbool.h>
-#include <stdio.h>
 
 typedef uint32_t Rune;
 
@@ -107,5 +101,3 @@ static void fputrune(Rune rune, FILE* f) {
     utf8encode(utf, rune);
     fprintf(f, "%s", utf);
 }
-
-#endif /* UTF8_H */

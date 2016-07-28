@@ -3,11 +3,6 @@
   @author Michael D. Lowis
   @license BSD 2-clause License
 */
-#ifndef LEX_H
-#define LEX_H
-
-#include <utf8.h>
-#include <strbuf.h>
 
 typedef struct lex_ctx_t {
     FILE* input;
@@ -163,5 +158,3 @@ static bool is_hex(Rune r) {
 static bool is_alnum(Rune r) {
     return (is_alpha(r) || isdec(r));
 }
-
-#endif

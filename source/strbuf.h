@@ -3,11 +3,6 @@
   @author Michael D. Lowis
   @license BSD 2-clause License
 */
-#ifndef STRBUF_H
-#define STRBUF_H
-
-#include <utf8.h>
-#include <string.h>
 
 typedef struct {
     size_t index;
@@ -66,5 +61,3 @@ static void strbuf_add_rune(strbuf_t* buf, Rune rune) {
 static void strbuf_cat(strbuf_t* dest, strbuf_t* src) {
     strbuf_add_string(dest, strbuf_string(src));
 }
-
-#endif /* STRBUF_H */

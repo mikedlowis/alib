@@ -3,11 +3,6 @@
   @author Michael D. Lowis
   @license BSD 2-clause License
 */
-#ifndef LIST_H
-#define LIST_H
-
-#include <stddef.h>
-#include <stdbool.h>
 
 typedef struct list_node_t {
     struct list_node_t* next;
@@ -95,5 +90,3 @@ static bool list_node_has_prev(list_node_t* node) {
 static list_node_t* list_node_prev(list_node_t* node) {
     return node->prev;
 }
-
-#endif /* LIST_H */
