@@ -20,7 +20,7 @@ the files provided and their fucntion.
 
 ## License
 
-All files provided are distributed under the (ISC license)[LICENSE.md] 
+All files provided are distributed under the [ISC license](LICENSE.md) 
 unless explicitly state otherwise.
 
 ## Installation and Usage
