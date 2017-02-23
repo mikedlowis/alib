@@ -47,7 +47,7 @@ static size_t utf8encode(char str[UTF_MAX], Rune rune) {
     size_t len = runelen(rune);
     str[0] = (len == 1 ? 0x00 : UTF8_SeqBits[len])
            | (UTF8_SeqMask[len] & (rune >> (6 * (len-1))));
-    for (int i = 1; i < len; i++)
+    for (size_t i = 1; i < len; i++)
         str[i] = 0x80u | (0x3Fu & (rune >> (6 * (len-i-1))));
     return len;
 }
@@ -82,7 +82,7 @@ static bool utf8decode(Rune* rune, size_t* length, int byte) {
 }
 
 static size_t utflen(const char* s) {
-    size_t len = 0, rlen = 0;
+    size_t len = 0;
     Rune rune = 0;
     while (*s && !utf8decode(&rune, &len, *(s++)))
         len++;
