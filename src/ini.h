@@ -17,9 +17,6 @@
     TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
     PERFORMANCE OF THIS SOFTWARE.
 */
-#ifndef INI_H
-#define INI_H
-
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -108,5 +105,3 @@ static bool iniparse(inifile_t* inifile, inientry_t* entry)
     inifile->file = NULL;
     return false;
 }
-
-#endif /* INI_H */

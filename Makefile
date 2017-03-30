@@ -1,6 +1,6 @@
 CC     = c99
 CFLAGS = 
-INCS   = -Isource/
+INCS   = -Isrc/
 SRCS   = $(wildcard tests/*.c)
 OBJS   = $(SRCS:.c=.o)
 

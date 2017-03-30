@@ -2,6 +2,8 @@
 #include <stdc.h>
 #include <time.h>
 
+char* ARGV0;
+
 int main(int argc, char** argv)
 {
     (void)argc;

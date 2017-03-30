@@ -1,7 +1,22 @@
-/**
-  @brief Collection of useful C types and functions.
-  @author Michael D. Lowis
-  @license BSD 2-clause License
+/*
+    Setup common ANSI C environment with common includes, functions, typedefs, 
+    and macros.
+    
+    Copyright 2017, Michael D. Lowis
+    
+    Permission to use, copy, modify, and/or distribute this software
+    for any purpose with or without fee is hereby granted, provided
+    that the above copyright notice and this permission notice appear
+    in all copies.
+    
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+    WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+    AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+    DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA
+    OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+    TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+    PERFORMANCE OF THIS SOFTWARE.
 */
 
 /* Standard Macros and Types */
@@ -19,8 +34,8 @@
 #include <stdarg.h>
 #include <string.h>
 
-/* Type Definitions
- *****************************************************************************/
+/* Type and Variable Definitions
+ ******************************************************************************/
 typedef unsigned short ushort;
 typedef unsigned char uchar;
 typedef unsigned long ulong;
@@ -42,81 +57,106 @@ typedef int64_t int64;
 typedef uintptr_t uintptr;
 typedef intptr_t  intptr;
 
-/* Generic Death Function
- *****************************************************************************/
-static void die(const char* msgfmt, ...) {
+/* This variable contains the value of argv[0] so that it can be referenced
+ * again once the option parsing is done. This variable must be defined by the
+ * program.
+ *
+ * NOTE: Ensure that you define this variable with external linkage (i.e. not
+ * static) */
+extern char* ARGV0;
+
+/* Function Definitions
+ ******************************************************************************/
+/* print a fatal error message and exit the program */
+static void fatal(const char* fmt, ...) {
+    fflush(stdout);
+    if (ARGV0) fprintf(stderr, "%s: ", ARGV0);
     va_list args;
-    va_start(args, msgfmt);
-    #ifdef CLEANUP_HOOK
-    CLEANUP_HOOK();
-    #endif
-    fprintf(stderr, "Error: ");
-    vfprintf(stderr, msgfmt, args);
-    fprintf(stderr, "\n");
+    va_start(args, fmt);
+    vfprintf(stderr, fmt, args);
     va_end(args);
+    if (*fmt && fmt[strlen(fmt)-1] == ':')
+        fprintf(stderr, " %s", strerror(errno));
+    fprintf(stderr, "\n");
     exit(EXIT_FAILURE);
 }
 
-/* Generic Warning Function
- *****************************************************************************/
-static void warn(const char* msgfmt, ...) {
+/* print a warning message to stderr */
+static void warn(const char* fmt, ...) {
     va_list args;
-    va_start(args, msgfmt);
-    fprintf(stderr, "Warning: ");
-    vfprintf(stderr, msgfmt, args);
+    va_start(args, fmt);
+    fprintf(stderr, "warning: ");
+    vfprintf(stderr, fmt, args);
     fprintf(stderr, "\n");
     va_end(args);
 }
 
-/* Signal Handling
- *****************************************************************************/
+/* Install a signal handler. Om failure, print a fatal error */
 static void esignal(int sig, void (*func)(int)) {
     errno = 0;
     func  = signal(sig, func);
     if (func == SIG_ERR || errno > 0)
-        die("failed to register signal handler for signal %d", sig);
+        fatal("failed to register signal handler for signal %d", sig);
 }
 
+/* Raise a signal. On failure, print a fatal error. */
 static int eraise(int sig) {
     int ret;
     if ((ret = raise(sig)) != 0)
-        die("failed to raise signal %d", sig);
+        fatal("failed to raise signal %d", sig);
     return ret;
 }
 
-/* Dynamic Allocation
- *****************************************************************************/
+/* Allocate a zero-initialized block of memory on the heap. On failure, print a 
+   fatal error. */
 static void* ecalloc(size_t num, size_t size) {
     void* ret;
     if (NULL == (ret = calloc(num,size)))
-        die("out of memory");
+        fatal("out of memory");
     return ret;
 }
 
+/* Allocate an uninitialized block of memory on the heap. On failure, print a 
+   fatal error. */
 static void* emalloc(size_t size) {
     void* ret;
     if (NULL == (ret = malloc(size)))
-        die("out of memory");
+        fatal("out of memory");
     return ret;
 }
 
+/* Resize a heap allocated block. On failure, print a fatal error. */
 static void* erealloc(void* ptr, size_t size) {
     void* ret;
     if (NULL == (ret = realloc(ptr,size)))
-        die("out of memory");
+        fatal("out of memory");
     return ret;
 }
 
-/* File Handling
- *****************************************************************************/
+/* Print to a malloced string. On failure, print a fatal error. */
+static char* smprintf(const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    int strsz = vsnprintf(NULL, 0, fmt, args);
+    va_end(args);
+    char* str = emalloc(strsz+1);
+    va_start(args, fmt);
+    vsnprintf(str, strsz+1, fmt, args);
+    va_end(args);
+    return str;
+}
+
+/* Open the file with the specified mode. On failure, print a fatal error. */
 static FILE* efopen(const char* filename, const char* mode) {
     FILE* file;
     errno = 0;
     if (NULL == (file = fopen(filename, mode)) || errno != 0)
-        die("failed to open file: %s", filename);
+        fatal("failed to open file: %s", filename);
     return file;
 }
 
+/* Read an entire line of data from the provided file into a malloced string. On
+   failure, print a fatal error */
 static char* efreadline(FILE* input) {
     size_t size  = 8;
     size_t index = 0;
@@ -140,8 +180,8 @@ static char* efreadline(FILE* input) {
     return str;
 }
 
-/* String Handling
- *****************************************************************************/
+/* Allocate a duplicate copy of the string on the heap. Signal fatal error on
+   memory allocation failure. */
 static char* estrdup(const char *s) {
     char* ns = (char*)emalloc(strlen(s) + 1);
     strcpy(ns,s);
@@ -149,11 +189,11 @@ static char* estrdup(const char *s) {
 }
 
 /* Option Parsing
- *
+ *******************************************************************************
  * This following macros implement a simple POSIX-style option parsing strategy.
  * They are heavily influenced and inspired by the arg.h file from suckless.org
  * (http://git.suckless.org/libsl/tree/arg.h). That file is in turn inspired by
- * the corresponding macros defined in plan9.
+ * the corresponding macros defined in plan9 libc.h.
  *
  * The interface assumes that the main function will have the following
  * prototype:
@@ -172,14 +212,6 @@ static char* estrdup(const char *s) {
  *     return 0;
  * }
  */
-
-/* This variable contains the value of argv[0] so that it can be referenced
- * again once the option parsing is done. This variable must be defined by the
- * program.
- *
- * NOTE: Ensure that you define this variable with external linkage (i.e. not
- * static) */
-extern char* ARGV0;
 
 /* This is a helper function used by the following macros to parse the next
  * option from the command line. */
@@ -247,8 +279,8 @@ static inline char* _getopt_(int* p_argc, char*** p_argv) {
 #define OPTLONG \
     case '-'
 
-/* Error Handling
- *****************************************************************************/
+/* Error Handling Macros
+ ******************************************************************************/
 #ifdef NDEBUG
     #define debug(msg, ...) \
         ((void)0)
@@ -269,8 +301,8 @@ static inline char* _getopt_(int* p_argc, char*** p_argv) {
 #define sentinel(msg, ...) \
     { print_error(msg, ##__VA_ARGS__); errno=0; goto error; }
 
-/* Miscellaneous
- *****************************************************************************/
+/* Miscellaneous Macros
+ ******************************************************************************/
 #ifndef nelem
     #define nelem(x) \
         (sizeof(x)/sizeof((x)[0]))
