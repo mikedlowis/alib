@@ -96,14 +96,14 @@ static void esignal(int sig, void (*func)(int)) {
     errno = 0;
     func  = signal(sig, func);
     if (func == SIG_ERR || errno > 0)
-        fatal("failed to register signal handler for signal %d", sig);
+        fatal("signal(%d, %p) failed:", sig, func);
 }
 
 /* Raise a signal. On failure, print a fatal error. */
 static int eraise(int sig) {
     int ret;
     if ((ret = raise(sig)) != 0)
-        fatal("failed to raise signal %d", sig);
+        fatal("raise(%d) failed:", sig);
     return ret;
 }
 
@@ -112,7 +112,7 @@ static int eraise(int sig) {
 static void* ecalloc(size_t num, size_t size) {
     void* ret;
     if (NULL == (ret = calloc(num,size)))
-        fatal("out of memory");
+        fatal("calloc(%zu, %zu) failed:", num, size);
     return ret;
 }
 
@@ -121,7 +121,7 @@ static void* ecalloc(size_t num, size_t size) {
 static void* emalloc(size_t size) {
     void* ret;
     if (NULL == (ret = malloc(size)))
-        fatal("out of memory");
+        fatal("malloc(%zu) failed:", size);
     return ret;
 }
 
@@ -129,7 +129,7 @@ static void* emalloc(size_t size) {
 static void* erealloc(void* ptr, size_t size) {
     void* ret;
     if (NULL == (ret = realloc(ptr,size)))
-        fatal("out of memory");
+        fatal("realloc(%p, %zu) failed:", ptr, size);
     return ret;
 }
 
@@ -151,7 +151,7 @@ static FILE* efopen(const char* filename, const char* mode) {
     FILE* file;
     errno = 0;
     if (NULL == (file = fopen(filename, mode)) || errno != 0)
-        fatal("failed to open file: %s", filename);
+        fatal("fopen(%s, %s) failed:", filename, mode);
     return file;
 }
 
